@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
     private companion object {
         // Native WebView page scale. Do not CSS-transform the document: that can
         // desynchronize real touch events from the visual cursor.
-        const val VISUAL_ZOOM_PERCENT = 80
+        const val VISUAL_ZOOM_PERCENT = 60
     }
 
     private lateinit var webView: WebView
@@ -181,7 +181,7 @@ class MainActivity : AppCompatActivity() {
         // Las coordenadas llegan en píxeles CSS del viewport; se convierten a píxeles
         // reales de pantalla con la densidad del dispositivo.
         // WebView.scale is the current CSS-pixel -> screen-pixel conversion.
-        // It includes the initial 80% zoom and keeps bridge taps under the cursor.
+        // It includes the initial 60% zoom and keeps bridge taps under the cursor.
         @Suppress("DEPRECATION")
         val currentScale = webView.scale
         val x = cssX * currentScale
@@ -440,6 +440,9 @@ class MainActivity : AppCompatActivity() {
 
             override fun onPageFinished(view: WebView?, url: String?) {
                 progressBar.visibility = View.GONE
+                // Some players replace viewport metadata while loading. Reapply the
+                // native scale after every navigation so the page stays at 60%.
+                webView.setInitialScale(VISUAL_ZOOM_PERCENT)
                 inyectarBloqueoAds()
                 inyectarNavegacionTV()
                 inyectarAutoPlay()
